@@ -29,20 +29,17 @@
     }
 
     .container {
-  background: white;
-  padding: 40px 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  max-width: 500px;
-  flex: 1 1 400px;
-  margin-bottom: 40px;
-
-  /* Scroll-tillegg */
-  max-height: 400px; /* Juster etter behov */
-  overflow-y: auto;
-}
-
+      background: white;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+      flex: 1 1 400px;
+      margin-bottom: 40px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
 
     h1 {
       margin-bottom: 30px;
@@ -102,74 +99,87 @@
         display: none;
       }
     }
+
+    /* Header og logg inn-knapp */
+    header {
+      width: 100%;
+      padding: 20px;
+      background-color: #ffffffee;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      margin: 0;
+      font-size: 32px;
+      color: #222;
+    }
+
+    .login-knapp {
+      margin-right: 20px;
+    }
+
+    .login-knapp a {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .login-knapp a:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
 
-    <!-- Topp-overskrift -->
-    <header style="width: 100%; padding: 20px 0; background-color: #ffffffee; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; position: sticky; top: 0; z-index: 100;">
-      <h1 style="margin: 0; font-size: 32px; color: #222;">Parkeringssystem Trondheim</h1>
-    </header>
-  
-    <!-- Hovedinnhold og bilde -->
-    <div class="wrapper">
-      <div class="container">
-        <h1>Velg Parkeringsområde:</h1>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🅿️</span> Finalebanen
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🏛️</span> Statens Hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🚘</span> Leuthenhaven P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🏟️</span> Torget P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🏙️</span> Sandgata P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🚙</span> Sentralbadet P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🚗</span> Bakklandet P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🏢</span> Billhuset Ola Brun
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🏬</span> Olavskvartalet P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🚉</span> Sentralstasjonen P-anlegg
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🚗</span> Brattøra P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🏊</span> Pirbadet P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🛍️</span> Solsiden P-hus
-        </a>
-        <a href="test.html" class="link-knapp">
-          <span class="emoji">🏢</span> Portalen P-hus
-        </a>
-      </div>
-  
-      <img src="ParkeringsoversiktTrondheim.jpg" alt="Parkeringskart" class="side-image" />
+  <!-- Topp-overskrift med logg inn-knapp -->
+  <header>
+    <h1 class="header-title">Parkeringssystem Trondheim</h1>
+    <div class="login-knapp">
+      <a href="Login.html">Logg inn / Registrer</a>
     </div>
-  
-    <!-- Kart under -->
-    <div class="map-container">
-      <iframe 
-        src="https://maps.google.com/maps?q=midtbyen&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-        allowfullscreen>
-      </iframe>
+  </header>
+
+  <!-- Hovedinnhold og bilde -->
+  <div class="wrapper">
+    <div class="container">
+      <h1>Velg Parkeringsområde:</h1>
+      <a href="test.html" class="link-knapp"><span class="emoji">🅿️</span> Finalebanen</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🏛️</span> Statens Hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🚘</span> Leuthenhaven P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🏟️</span> Torget P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🏙️</span> Sandgata P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🚙</span> Sentralbadet P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🚗</span> Bakklandet P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🏢</span> Billhuset Ola Brun</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🏬</span> Olavskvartalet P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🚉</span> Sentralstasjonen P-anlegg</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🚗</span> Brattøra P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🏊</span> Pirbadet P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🛍️</span> Solsiden P-hus</a>
+      <a href="test.html" class="link-knapp"><span class="emoji">🏢</span> Portalen P-hus</a>
     </div>
-  
-  </body>
-  
+
+    <img src="ParkeringsoversiktTrondheim.jpg" alt="Parkeringskart" class="side-image" />
+  </div>
+
+  <!-- Kart under -->
+  <div class="map-container">
+    <iframe 
+      src="https://maps.google.com/maps?q=midtbyen&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+</body>
 </html>
