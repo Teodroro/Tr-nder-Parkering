@@ -1,0 +1,99 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "NTNU-IOT";
+const char* password = "";
+
+const char* serverUrl = "http://10.25.1.20:5000/sensor";  // Flask server on Raspberry Pi
+
+// Sensor 1 pins
+#define TRIG_PIN 5
+#define ECHO_PIN 18
+
+// Sensor 2 pins
+#define TRIG_PIN2 2
+#define ECHO_PIN2 15
+
+float readDistanceCM(int trigPin, int echoPin) {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long duration = pulseIn(echoPin, HIGH, 30000); // timeout etter 30ms
+  if (duration == 0) return -1; // feilmåling
+  return duration * 0.034 / 2;
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(TRIG_PIN2, OUTPUT);
+  pinMode(ECHO_PIN2, INPUT);
+
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi connected!");
+}
+
+void loop() {
+  // Les fra sensor 1
+  float distance1 = readDistanceCM(TRIG_PIN, ECHO_PIN);
+  Serial.print("Sensor 1: ");
+  Serial.print(distance1);
+  Serial.println(" cm");
+
+  int status1 = (distance1 > 0 && distance1 < 50.0) ? 1 : 0;
+
+  // Les fra sensor 2
+  float distance2 = readDistanceCM(TRIG_PIN2, ECHO_PIN2);
+  Serial.print("Sensor 2: ");
+  Serial.print(distance2);
+  Serial.println(" cm");
+
+  int status2 = (distance2 > 0 && distance2 < 50.0) ? 1 : 0;
+
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+
+    // Sensor 1
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "application/json");
+    String payload1 = "{\"sensor_id\":\"ultra_1\",\"parkeringsplass_id\":1,\"verdi\":" + String(status1) + "}";
+    int responseCode1 = http.POST(payload1);
+    Serial.print("Sensor 1 POST response: ");
+    Serial.println(responseCode1);
+    http.end();
+
+    // Sensor 2
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "application/json");
+    String payload2 = "{\"sensor_id\":\"ultra_2\",\"parkeringsplass_id\":2,\"verdi\":" + String(status2) + "}";
+    int responseCode2 = http.POST(payload2);
+    Serial.print("Sensor 2 POST response: ");
+    Serial.println(responseCode2);
+    http.end();
+  }
+
+  delay(500); // kort pause før dvalemodus
+
+  esp_sleep_enable_timer_wakeup(10 * 1000000);
+  esp_light_sleep_start();
+
+  if (WiFi.status() != WL_CONNECTED) {
+    WiFi.begin(ssid, password);
+    Serial.print("Reconnecting to Wi-Fi");
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+    Serial.println("\nWi-Fi reconnected!");
+  }
+}
