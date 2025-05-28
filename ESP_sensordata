@@ -1,0 +1,77 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "NTNU-IOT";
+const char* password = "";
+
+const char* serverUrl = "http://10.25.1.20:5000/sensor";  // Flask server på Raspberry Pi
+
+// Sensor 1 pins
+#define TRIG_PIN 5
+#define ECHO_PIN 18
+
+float readDistanceCM(int trigPin, int echoPin) {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long duration = pulseIn(echoPin, HIGH, 30000); // timeout etter 30ms
+  if (duration == 0) return -1; // feilmåling
+  return duration * 0.034 / 2;
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi connected!");
+}
+
+void loop() {
+  // Les fra sensor 1
+  float distance = readDistanceCM(TRIG_PIN, ECHO_PIN);
+  Serial.print("Avstand: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  int status = (distance > 0 && distance < 50.0) ? 1 : 0;
+
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "application/json");
+
+    String payload = "{\"sensor_id\":\"ultra_1\",\"parkeringsplass_id\":1,\"verdi\":" + String(status) + "}";
+    int responseCode = http.POST(payload);
+
+    Serial.print("POST response: ");
+    Serial.println(responseCode);
+
+    http.end();
+  }
+
+  delay(500); // kort pause før dvalemodus
+
+  esp_sleep_enable_timer_wakeup(10 * 1000000); // 30 sekunder
+  esp_light_sleep_start();
+
+  if (WiFi.status() != WL_CONNECTED) {
+    WiFi.begin(ssid, password);
+    Serial.print("Reconnecting to Wi-Fi");
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+    Serial.println("\nWi-Fi reconnected!");
+  }
+}
