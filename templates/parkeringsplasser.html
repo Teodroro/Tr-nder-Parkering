@@ -107,6 +107,38 @@
         }
     </style>
 </head>
+<script>
+function updateParkingSpots() {
+    fetch('/api/status')
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById("parkeringsplass");
+            container.innerHTML = "";
+
+            // Sort to ensure A1–A4, then B1–B4 order
+            data.sort((a, b) => a.plassnummer.localeCompare(b.plassnummer));
+
+            data.forEach((plass, index) => {
+                const div = document.createElement("div");
+                const status = plass.er_opptatt ? "opptatt" : "ledig";
+                div.className = "plass " + status;
+                div.innerText = `Plass ${plass.plassnummer}\n${status.charAt(0).toUpperCase() + status.slice(1)}`;
+                container.appendChild(div);
+
+                // Insert "Innkjøring" after A4 (index 3)
+                if (index === 3) {
+                    const innkjoring = document.createElement("div");
+                    innkjoring.className = "innkjoring";
+                    innkjoring.innerText = "Innkjøring";
+                    container.appendChild(innkjoring);
+                }
+            });
+        });
+}
+window.onload = updateParkingSpots;
+setInterval(updateParkingSpots, 5000);
+
+</script>
 <body>
     <div class="container">
         <h1>Parkeringshus Overvåking</h1>
@@ -162,10 +194,23 @@
 
             // Første rad – A1 til A4
             for (let i = 1; i <= 4; i++) {
-                let plass = document.createElement("div");
-                let status = Math.random() < 0.5 ? "opptatt" : "ledig";
-                plass.className = "plass " + status;
-                plass.innerText = `Plass A${i}\n${status.charAt(0).toUpperCase() + status.slice(1)}`;
+<script>
+    const parkeringsdata = {{ plasser | tojson }};
+    function generateParkingSpots() {
+        const container = document.getElementById("parkeringsplass");
+        container.innerHTML = "";
+
+        parkeringsdata.forEach(plass => {
+            const div = document.createElement("div");
+            div.className = "plass " + (plass.er_opptatt ? "opptatt" : "ledig");
+            div.innerText = `Plass ${plass.plassnummer}\n${plass.er_opptatt ? "Opptatt" : "Ledig"}`;
+            container.appendChild(div);
+        });
+    }
+
+    generateParkingSpots();
+</script>
+
                 parkeringsplass.appendChild(plass);
             }
 
@@ -178,9 +223,6 @@
             // Andre rad – B1 til B4
             for (let i = 1; i <= 4; i++) {
                 let plass = document.createElement("div");
-                let status = Math.random() < 0.5 ? "opptatt" : "ledig";
-                plass.className = "plass " + status;
-                plass.innerText = `Plass B${i}\n${status.charAt(0).toUpperCase() + status.slice(1)}`;
                 parkeringsplass.appendChild(plass);
             }
         }

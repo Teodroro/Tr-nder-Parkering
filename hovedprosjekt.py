@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import mariadb
 
 app = Flask(__name__)
@@ -6,8 +6,8 @@ app.secret_key = 'supersecretkey'
 
 db_config = {
     'host': 'localhost',
-    'user': 'r1',        
-    'password': 'parkering2025', 
+    'user': 'r1',
+    'password': 'parkering2025',
     'database': 'parkering25',
     'port': 3306
 }
@@ -18,6 +18,27 @@ def get_db_connection():
     except mariadb.Error as e:
         print(f"Feil ved tilkobling til databasen: {e}")
         return None
+
+
+@app.route('/api/update-spot', methods=['POST'])
+def update_spot():
+    data = request.get_json()
+    plassnummer = data.get('plassnummer')
+    er_opptatt = data.get('er_opptatt')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE parkeringsplasser
+        SET er_opptatt = %s
+        WHERE plassnummer = %s
+    """, (int(er_opptatt), plassnummer))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "ok"}), 200
+
+
 
 @app.route('/')
 def startside():
@@ -68,22 +89,42 @@ def register():
 
     return redirect(url_for('login'))
 
+@app.route('/api/status')
+def api_status():
+    expected = ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT plassnummer, er_opptatt FROM parkeringsplasser")
+    rows = cursor.fetchall()
+    conn.close()
+
+    db_map = {row[0]: row[1] for row in rows}
+
+    full_status = []
+    for plass in expected:
+        full_status.append({
+            "plassnummer": plass,
+            "er_opptatt": db_map.get(plass, 0)  # default to ledig (0)
+        })
+
+    return jsonify(full_status)
+
+
+
 @app.route('/oversikt')
 def oversikt():
     conn = get_db_connection()
-    if not conn:
-        flash("Databasefeil.")
-        return redirect(url_for('startside'))
-
     cursor = conn.cursor()
-    cursor.execute("SELECT id, plassnummer, etasje, er_opptatt FROM parkeringsplasser")
-    raw_data = cursor.fetchall()
+    cursor.execute("SELECT plassnummer, er_opptatt FROM parkeringsplasser")
+    plasser = cursor.fetchall()
     conn.close()
 
-    columns = ['id', 'plassnummer', 'etasje', 'er_opptatt']
-    plasser = [dict(zip(columns, row)) for row in raw_data]
+    data = [{"plassnummer": p[0], "er_opptatt": p[1]} for p in plasser]
+    return render_template("parkeringsplasser.html", plasser=data)
 
-    return render_template('parkeringsplasser.html', plasser=plasser)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
