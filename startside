@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parkeringssystem - Startside</title>
+  <link rel="icon" href="favicon.ico" />
+  <meta name="description" content="Sanntids parkeringsoversikt og miljødata for parkeringshus i Trondheim.">
   <style>
     * {
       box-sizing: border-box;
@@ -16,6 +18,12 @@
       min-height: 100vh;
       position: relative;
       padding: 40px 20px;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
     }
 
     .wrapper {
@@ -52,7 +60,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      background-color: #0066cc;
+      background: linear-gradient(135deg, #007bff, #0056b3);
       color: white;
       text-decoration: none;
       padding: 15px;
@@ -61,6 +69,7 @@
       font-size: 18px;
       font-weight: 500;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .link-knapp:hover {
@@ -100,7 +109,6 @@
       }
     }
 
-    /* Header og logg inn-knapp */
     header {
       width: 100%;
       padding: 20px;
@@ -116,8 +124,9 @@
 
     .header-title {
       margin: 0;
-      font-size: 32px;
+      font-size: 36px;
       color: #222;
+      font-weight: bold;
     }
 
     .login-knapp {
@@ -142,7 +151,6 @@
 </head>
 <body>
 
-  <!-- Topp-overskrift med logg inn-knapp -->
   <header>
     <h1 class="header-title">Parkeringssystem Trondheim</h1>
     <div class="login-knapp">
@@ -150,7 +158,6 @@
     </div>
   </header>
 
-  <!-- Hovedinnhold og bilde -->
   <div class="wrapper">
     <div class="container">
       <h1>Velg Parkeringsområde:</h1>
@@ -173,7 +180,6 @@
     <img src="ParkeringsoversiktTrondheim.jpg" alt="Parkeringskart" class="side-image" />
   </div>
 
-  <!-- Kart under -->
   <div class="map-container">
     <iframe 
       src="https://maps.google.com/maps?q=midtbyen&t=&z=15&ie=UTF8&iwloc=&output=embed" 
