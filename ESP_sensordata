@@ -4,7 +4,7 @@
 const char* ssid = "NTNU-IOT";
 const char* password = "";
 
-const char* serverUrl = "http://10.25.1.20:5000/sensor";  // Flask server på Raspberry Pi
+const char* serverUrl = "http://10.25.1.20:5000/api/update-spot";  // Flask server på Raspberry Pi
 
 // Sensor 1 pins
 #define TRIG_PIN 5
@@ -51,7 +51,7 @@ void loop() {
     http.begin(serverUrl);
     http.addHeader("Content-Type", "application/json");
 
-    String payload = "{\"sensor_id\":\"ultra_1\",\"parkeringsplass_id\":1,\"verdi\":" + String(status) + "}";
+    String payload = "{\"plassnummer\":\"A1\",\"er_opptatt\":" + String(status) + "}";
     int responseCode = http.POST(payload);
 
     Serial.print("POST response: ");
