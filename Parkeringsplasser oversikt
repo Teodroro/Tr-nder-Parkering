@@ -34,7 +34,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            margin: 30px 0;
+            margin: 30px 0 100px;
         }
         .chart-container {
             position: relative;
@@ -51,16 +51,17 @@
             font-weight: 600;
             color: #333;
         }
-        .parkeringsplass {
-            display: grid;
+       .parkeringsplass {
+            display: inline-grid; /* endret fra grid */
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: auto auto auto;
             gap: 15px;
             margin: 30px 0;
-        }
+}
+
         .plass {
-            width: 120px;
-            height: 180px;
+            width: 170px;
+            height: 260px;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
@@ -113,17 +114,22 @@
         
         <div class="chart-wrapper">
             <div class="chart-container">
+                <h2>CO₂-nivå</h2>
                 <div class="chart-label" id="co2Value">400 ppm</div>
                 <canvas id="co2Gauge"></canvas>
             </div>
             <div class="chart-container">
+                <h2>Støynivå</h2>
                 <div class="chart-label" id="noiseValue">50 dB</div>
                 <canvas id="noiseGauge"></canvas>
             </div>
         </div>
         
         <h2>Parkeringsplasser</h2>
-        <div class="parkeringsplass" id="parkeringsplass"></div>
+        <div style="text-align: center;">
+    <div class="parkeringsplass" id="parkeringsplass"></div>
+</div>
+
 
         <button onclick="updateData()">Oppdater Data</button>
     </div>
